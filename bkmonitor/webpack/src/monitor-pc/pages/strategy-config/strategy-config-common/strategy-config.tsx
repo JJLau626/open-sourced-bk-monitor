@@ -117,7 +117,8 @@ class StrategyConfig extends Mixins(commonPageSizeMixin) {
       { id: 16, name: i18n.t('修改通知间隔') },
       { id: 17, name: i18n.t('修改通知模板') },
       { id: 18, name: i18n.t('修改告警风暴开关') },
-      { id: 19, name: i18n.t('导出Yaml') }
+      { id: 19, name: i18n.t('导出Yaml') },
+      { id: 20, name: i18n.t('修改通知升级') }
     ],
     keyword: '',
     keywordObj: [], // 搜索框绑定值
@@ -1341,7 +1342,8 @@ class StrategyConfig extends Mixins(commonPageSizeMixin) {
             15: this.$t('批量修改通知场景成功'),
             16: this.$t('批量修改通知间隔成功'),
             17: this.$t('批量修改通知模板成功'),
-            18: this.$t('批量修改告警风暴开关成功')
+            18: this.$t('批量修改告警风暴开关成功'),
+            20: this.$t('批量修改通知升级成功')
           };
           this.handleGetListData();
           if (this.header.value === 6) {

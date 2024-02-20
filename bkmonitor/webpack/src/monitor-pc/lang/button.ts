@@ -438,5 +438,6 @@ export default {
   手动分组: 'Manual grouping',
   自动分组: 'Automatic grouping',
   当前空间: 'Current space',
-  平台数据: 'Platform data'
+  平台数据: 'Platform data',
+  修改通知升级: 'Modify Notice upgrade'
 };

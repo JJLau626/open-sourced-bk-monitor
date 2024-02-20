@@ -111,6 +111,10 @@ const TYPE_MAP = {
   18: {
     title: window.i18n.tc('修改告警风暴开关'),
     width: 480
+  },
+  20: {
+    title: window.i18n.tc('修改通知升级'),
+    width: 526
   }
 };
 
@@ -176,7 +180,15 @@ export default class StrategyConfigDialog extends tsc<IProps, IEvents> {
       val: 5
     },
     notice: {
-      val: 120
+      val: 120,
+      options: {
+        /** 通知升级相关 */
+        upgrade_config: {
+          is_enabled: false,
+          user_groups: [],
+          upgrade_interval: 1440
+        }
+      }
     },
     noDataAlarm: {
       cycle: 5
@@ -256,6 +268,9 @@ export default class StrategyConfigDialog extends tsc<IProps, IEvents> {
         if (!this.messageTemplateList.length) {
           await this.getMessageTemplateList();
         }
+      }
+      if (this.setType === 20 && !this.alarmGroupList.length) {
+        await this.getAlarmGroupList();
       }
       this.isLoading = false;
     }
@@ -438,7 +453,19 @@ export default class StrategyConfigDialog extends tsc<IProps, IEvents> {
         }
       },
       /* 修改告警风暴开关 */
-      18: () => ({ notice: { options: { converge_config: { need_biz_converge: this.data.needBizConverge } } } })
+      18: () => ({ notice: { options: { converge_config: { need_biz_converge: this.data.needBizConverge } } } }),
+      /** 修改通知升级 */
+      20: () => ({
+        notice: {
+          options: {
+            upgrade_config: {
+              is_enabled: this.data.notice.options.upgrade_config.is_enabled,
+              user_groups: this.data.notice.options.upgrade_config.user_groups,
+              upgrade_interval: this.data.notice.options.upgrade_config.upgrade_interval
+            }
+          }
+        }
+      })
     };
     return setTypeMap[this.setType]?.() || {};
   }
@@ -867,6 +894,70 @@ export default class StrategyConfigDialog extends tsc<IProps, IEvents> {
                 {this.$t('当防御的通知汇总也产生了大量的风暴时，会进行本业务的跨策略的汇总通知。')}
               </span>
             </span>
+          </div>
+        );
+      case 20 /** 修改通知升级 */:
+        return (
+          <div>
+            <div class='upgrade-warp'>
+              <div class='title'>{this.$t('通知升级')}</div>
+              <div style='padding-left: 22px;'>
+                <bk-switcher
+                  theme='primary'
+                  size='small'
+                  v-model={this.data.notice.options.upgrade_config.is_enabled}
+                ></bk-switcher>
+                {this.data.notice.options.upgrade_config.is_enabled && (
+                  <i18n
+                    class='text'
+                    tag='div'
+                    path='当告警持续时长每超过{0}分种，将逐个按告警组升级通知'
+                  >
+                    <bk-select
+                      v-model={this.data.notice.options.upgrade_config.upgrade_interval}
+                      behavior='simplicity'
+                      style='width: 78px'
+                      zIndex={99999}
+                      placeholder={this.$t('输入')}
+                      allow-create
+                      allow-enter
+                      class='notice-select'
+                    >
+                      <bk-option
+                        id={1}
+                        name={1}
+                      />
+                      <bk-option
+                        id={5}
+                        name={5}
+                      />
+                      <bk-option
+                        id={10}
+                        name={10}
+                      />
+                      <bk-option
+                        id={30}
+                        name={30}
+                      />
+                    </bk-select>
+                  </i18n>
+                )}
+                {this.data.notice.options.upgrade_config.is_enabled && (
+                  <AlarmGroup
+                    v-model={this.data.notice.options.upgrade_config.user_groups}
+                    class='alarm-group'
+                    list={this.alarmGroupList}
+                    readonly={false}
+                    showAddTip={false}
+                    isSimple={true}
+                    style='margin-top: 8px;'
+                    onAddGroup={() => {
+                      this.dialogShow = false;
+                    }}
+                  ></AlarmGroup>
+                )}
+              </div>
+            </div>
           </div>
         );
       default:
